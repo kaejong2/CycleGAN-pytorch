@@ -1,4 +1,6 @@
-## DCGAN implement
+## GAN implement
 ---
 
-GAN implement writing...
+writing...
+
+DCGAN
