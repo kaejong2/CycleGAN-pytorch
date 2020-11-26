@@ -1,1 +1,2 @@
-# seminar_kookmin
+## DCGAN implement
+---
