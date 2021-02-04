@@ -1,102 +1,49 @@
-import os
+import argparse
 import torch
-import torchvision
-import torch.nn as nn
-import torch.optim as optim
-from torchvision import transforms
-from torchvision.utils import save_image
-from torch.autograd import Variable
-import matplotlib.pyplot as plt
-import pylab
-import numpy as np
-import torchvision.utils as vutils
-from dataloader import data_loader
-from arguments import Arguments
-from model.DCGAN import Generator, Discriminator
+from train import cycleGAN
 
-class GAN():
-    def __init__(self,args):
-        self.args = args
-        #dataset
+def Arguments():
+    parser = argparse.ArgumentParser(description='Arguments for CycleGAN.')
 
-        self.data = data_loader(self.args)
-        #Module
-        self.G = Generator().to(device= args.device)
-        self.D = Discriminator().to(device= args.device)
-        self.criterion = nn.BCELoss().to(device= args.device)
-        self.optimizerG = optim.Adam(self.G.parameters(), lr=args.lr, betas=(0,0.99))
-        self.optimizerD = optim.Adam(self.D.parameters(), lr=args.lr, betas=(0,0.99))
-        self.fixed_noise = torch.randn(self.args.batch_size, 100, 1, 1, device=args.device)
+    parser.add_argument('--gpu', type=int, default=6, help='GPU number to use.')
+    # Dataset arguments
+    parser.add_argument('--dataset_path', type=str, default='/mnt/hdd/LJJ/DATA/pix2pix/concat', help='Dataset file path.')
+    parser.add_argument('--batch_size', type=int, default=8, help='Integer value for batch size.')
+    parser.add_argument('--image_size', type=int, default=256, help='Integer value for number of points.')
+    parser.add_argument('--input_nc', type=int, default=3, help='size of image height')
+    parser.add_argument('--output_nc', type=int, default=3, help='size of image height')
+    parser.add_argument('--channels', type=int, default=10, help='Number of image channels')
     
-    def run(self, save_ckpt=None, load_ckpt=None, result_path=None):
-        for epoch in range(args.num_epochs):
-            for _iter, data in enumerate(self.data):
-                real = data[0].to(self.args.device)
-                batch_size = real.size(0)
-                label = torch.full((self.args.batch_size,), 1, dtype=real.dtype, device=self.args.device)
+    # Optimizer arguments
+    parser.add_argument('--b1', type=int, default=0.5, help='GPU number to use.')
+    parser.add_argument('--b2', type=int, default=0.999, help='GPU number to use.')
+    parser.add_argument('--lr', type=float, default=2e-4, help='Adam : learning rate.')
+    parser.add_argument('--decay_epoch', type=int, default=100, help="epoch from which to start lr decay")
 
-                self.D.zero_grad()
-                D_real = self.D(real)
-                lossD_real = self.criterion(D_real, label)
-                lossD_real.backward()
-                D_x = D_real.mean().item()
-
-                noise = torch.randn(self.args.batch_size, 100, 1, 1, device=self.args.device)
-                
-                label.fill_(0)
-                
-                D_fake = self.D(self.G(noise).detach())
-                
-                lossD_fake = self.criterion(D_fake, label)
-                lossD_fake.backward()
-                D_G_z1 = D_fake.mean().item()
-                lossD = lossD_real + lossD_fake
-                self.optimizerD.step()
-
-                ############################
-                # (2) Update G network: maximize log(D(G(z)))
-                ###########################
-                self.G.zero_grad()
-                label.fill_(1)
-
-                D_fake = self.D(self.G(noise))
-                lossG = self.criterion(D_fake,label)
-                lossG.backward()
-                D_G_z2 = D_fake.mean().item()
-                self.optimizerG.step()
-
-                print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
-                    % (epoch, self.args.num_epochs, _iter, len(self.data),
-                        lossD.item(), lossG.item(), D_x, D_G_z1, D_G_z2))
-                if _iter % 100 == 0:
-                    vutils.save_image(real,
-                            '%sreal_samples.png' % result_path,
-                            normalize=True)
-                    fake = self.G(self.fixed_noise)
-                    vutils.save_image(fake.detach(),
-                            '%sfake_samples_epoch_%03d.png' % (result_path, epoch),
-                            normalize=True)
-
-    # do checkpointing
-        torch.save(self.netG.state_dict(), '%snetG_epoch_%d.pth' % (save_ckpt, epoch))
-        torch.save(self.netD.state_dict(), '%snetD_epoch_%d.pth' % (save_ckpt, epoch))
-
+    # Training arguments
+    parser.add_argument('--epoch', type=int, default=0, help='Epoch to start training from.')
+    parser.add_argument('--num_epochs', type=int, default=200, help='Number of epochs of training.')
+    parser.add_argument('--root_path', type=str, default='/mnt/hdd/LJJ/GAN/cycleGAN/datasets/apple2orange/', help='Checkpoint path.')
+    parser.add_argument('--ckpt_path', type=str, default='/mnt/hdd/LJJ/GAN/ckpt/', help='Checkpoint path.')
+    parser.add_argument('--result_path', type=str, default='/mnt/hdd_10tb_1/LJJ/DCGAN/save/generated/', help='Generated results path.')
+    parser.add_argument('--sample_interval', type=int, default=20, help='Interval between sampling of images from generators')
+    parser.add_argument("--checkpoint_interval", type=int, default=1, help="interval between model checkpoints")
+    
+    # Network arguments
+    parser.add_argument('--lambdaGP', type=int, default=10, help='Lambda for GP term.')
+    parser.add_argument('--latent', type=int, default=64, help='random latent size')
+    parser.add_argument('--hidden', type=int, default=256, help='hidden layer size')
+    
+    # Model arguments
+    args = parser.parse_args()
+    return args
 
 if __name__ == '__main__':
-    args = Arguments().parser().parse_args()
+    args = Arguments()
 
     args.device = torch.device('cuda:'+str(args.gpu) if torch.cuda.is_available() else 'cpu')
 
-    # Create a directory if not exists
-    
-    if os.path.exists(args.ckpt_path) is False:
-        os.makedirs(args.ckpt_path)
-
-    if os.path.exists(args.result_path) is False:
-        os.makedirs(args.result_path)
-    model = GAN(args)
+    model = cycleGAN(args)
     
     model.run(save_ckpt=args.ckpt_path, result_path=args.result_path)
-
-
-
+ 
