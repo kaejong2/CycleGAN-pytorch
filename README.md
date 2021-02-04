@@ -3,4 +3,4 @@
 
 writing...
 
-DCGAN
+CycleGAN
