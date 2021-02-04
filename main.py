@@ -7,7 +7,7 @@ def Arguments():
 
     parser.add_argument('--gpu', type=int, default=2, help='GPU number to use.')
     # Dataset arguments
-    parser.add_argument('--batch_size', type=int, default=4, help='Integer value for batch size.')
+    parser.add_argument('--batch_size', type=int, default=10, help='Integer value for batch size.')
     parser.add_argument('--image_size', type=int, default=256, help='Integer value for number of points.')
     parser.add_argument('--input_nc', type=int, default=3, help='size of image height')
     parser.add_argument('--output_nc', type=int, default=3, help='size of image height')
@@ -22,9 +22,9 @@ def Arguments():
     # Training arguments
     parser.add_argument('--epoch', type=int, default=0, help='Epoch to start training from.')
     parser.add_argument('--num_epochs', type=int, default=200, help='Number of epochs of training.')
-    parser.add_argument('--data_path', type=str, default='/mnt/hdd/jongjin/cyclegan/monet2photo/', help='Checkpoint path.')
-    parser.add_argument('--ckpt_path', type=str, default='/mnt/hdd/LJJ/GAN/ckpt/', help='Checkpoint path.')
-    parser.add_argument('--result_path', type=str, default='/mnt/hdd_10tb_1/LJJ/DCGAN/save/generated/', help='Generated results path.')
+    parser.add_argument('--data_path', type=str, default='/mnt/hdd/LJJ/cyclegan/monet2photo/', help='Checkpoint path.')
+    parser.add_argument('--ckpt_path', type=str, default='/mnt/hdd/LJJ/cyclegan/ckpt/', help='Checkpoint path.')
+    parser.add_argument('--result_path', type=str, default='/mnt/hdd/LJJ/cyclegan/result/', help='Generated results path.')
     
     # Network argument
     
@@ -39,5 +39,5 @@ if __name__ == '__main__':
 
     model = cycleGAN(args)
     
-    model.run(save_ckpt=args.ckpt_path, result_path=args.result_path)
+    model.run(ckpt_path=args.ckpt_path, result_path=args.result_path)
  
