@@ -93,7 +93,7 @@ class cycleGAN():
 
                 loss_D = loss_D_A + loss_D_A
                 loss_D.backward()
-                
+
                 set_requires_grad([self.netD_A, self.netD_B], False)
                 self.optimizerG.zero_grad()
                 

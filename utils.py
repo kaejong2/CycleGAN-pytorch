@@ -6,7 +6,10 @@ import os
 from torch.nn import init
 from torch.autograd import Variable
 import torch
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9f0119b63b58ef05d306d1aaca71ec0d422289c6
 import numpy as np
 from torch.optim import lr_scheduler
 

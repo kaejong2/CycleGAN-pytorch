@@ -1,27 +1,21 @@
+<<<<<<< HEAD
 import argparse
 import itertools
+=======
+import os, sys
+>>>>>>> 9f0119b63b58ef05d306d1aaca71ec0d422289c6
 import numpy as np
-import torchvision.transforms as transforms
+import torch
 
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
-from PIL import Image
-import torch
-import torch.optim as optim
-from Model.cycleGAN import Generator, Discriminator
+import torchvision.transforms as transforms
+import itertools
 
-from utils import ReplayBuffer
-
-from utils import Logger
-from utils import weights_init_normal
-from utils import save
-from utils import set_requires_grad
-
-import os
-
+from utils import *
+from model import Generator, Discriminator
 from dataloader import data_loader
 
-from arguments import Arguments
 
 
 
