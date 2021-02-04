@@ -40,13 +40,6 @@ def save(ckpt_dir, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch):
     torch.save({'netG_A2B' : netG_A2B.state_dict(), 'netG_B2A' : netG_B2A.state_dict(), 'netD_A':netD_A.state_dict(), 'netD_B': netD_B.state_dict(), 'optimG':optimG.state_dict(), 'optimD': optimD.state_dict()},
     "%s/model_epoch%d.pth" % (ckpt_dir,epoch))
 
-def pix2pix_save(ckpt_dir, G, D, optimizerG, optimizerD, epoch):
-    if not os.path.exists(ckpt_dir):
-        os.makedirs(ckpt_dir)
-    
-    torch.save({'G' : G.state_dict(), 'D': D.state_dict(), 'optimG':optimizerG.state_dict(), 'optimD': optimizerD.state_dict()},
-    "%s/model_epoch%d.pth" % (ckpt_dir,epoch))
-
 def load(ckpt_dir, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
     if not os.path.exists(ckpt_dir):
         epoch = 0
@@ -70,27 +63,11 @@ def load(ckpt_dir, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
 
     return netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch
 
-def pix2pix_load(ckpt_dir, G, D, optimizerG, optimizerD, epoch):
-    if not os.path.exists(ckpt_dir):
-        epoch = 0
-        return G, D, optimizerG, optimizerD, epoch
-    epoch = []
-    ckpt_list = os.listdir(ckpt_dir)
-    for i in range(len(ckpt_list)):
-        epoch += [int(ckpt_list[i].split('epoch')[1].split('.pth')[0])]
-    epoch.sort()
-    epoch[-1] = 19
+def load_checkpoint(ckpt_path):
+    ckpt = torch.load(ckpt_path)
+    print('Loading checkpoint from %s succeed' % ckpt_path)
+    return ckpt
 
-
-    dict_model = torch.load("%s/model_epoch%d.pth" % (ckpt_dir,epoch[-1]))
-
-    G.load_state_dict(dict_model['G'])
-    D.load_state_dict(dict_model['D'])
-    optimizerG.load_state_dict(dict_model['optimG'])
-    optimizerD.load_state_dict(dict_model['optimD'])
-
-
-    return G, D, optimizerG, optimizerD, epoch[-1]
 
 def set_requires_grad(nets, requires_grad=False):
         if not isinstance(nets, list):
@@ -100,25 +77,11 @@ def set_requires_grad(nets, requires_grad=False):
                 for param in net.parameters():
                     param.requires_grad = requires_grad
 
+class LambdaLR():
+    def __init__(self, epochs, offset, decay_epoch):
+        self.epochs = epochs
+        self.offset = offset
+        self.decay_epoch = decay_epoch
 
-def save_image(image_tensor):
-    img = image_tensor.to('cpu').detach().numpy().transpose(0,2,3,1)
-    img = img/2.0 *255.0
-    img = img.clip(0,255)
-    img = img.astype(np.uint8)
-    
-    return img
-
-
-def set_requires_grad(nets, requires_grad=False):
-    """Set requies_grad=Fasle for all the networks to avoid unnecessary computations
-    Parameters:
-        nets (network list)   -- a list of networks
-        requires_grad (bool)  -- whether the networks require gradients or not
-    """
-    if not isinstance(nets, list):
-        nets = [nets]
-    for net in nets:
-        if net is not None:
-            for param in net.parameters():
-                param.requires_grad = requires_grad
+    def step(self, epoch):
+        return 1.0 - max(0, epoch + self.offset - self.decay_epoch)/(self.epochs - self.decay_epoch)
