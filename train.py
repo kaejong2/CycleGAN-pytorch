@@ -44,7 +44,7 @@ class cycleGAN():
         self.dataloader = data_loader(self.args)
 
 
-    def run(self, save_ckpt=None, load_ckpt=None, result_path=None):
+    def run(self, ckpt_path=None, load_ckpt=None, result_path=None):
         for epoch in range(self.args.num_epochs):
             self.netG_A2B.train()
             self.netG_B2A.train()
@@ -93,7 +93,7 @@ class cycleGAN():
 
                 loss_D = loss_D_A + loss_D_A
                 loss_D.backward()
-                
+
                 set_requires_grad([self.netD_A, self.netD_B], False)
                 self.optimizerG.zero_grad()
                 
@@ -139,7 +139,7 @@ class cycleGAN():
                        np.mean(loss_cycle_A_train), np.mean(loss_cycle_B_train),
                        np.mean(loss_identity_A_train), np.mean(loss_identity_B_train)))
             
-            save(save_ckpt, self.netG_A2B, self.netG_B2A, self.netD_A, self.netD_B, self.optimizerG, self.optimizerD, epoch)
+            save(ckpt_path, self.netG_A2B, self.netG_B2A, self.netD_A, self.netD_B, self.optimizerG, self.optimizerD, epoch)
         
             self.lr_scheduler_G.step()
             self.lr_scheduler_D.step()

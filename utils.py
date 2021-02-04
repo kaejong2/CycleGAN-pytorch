@@ -6,7 +6,6 @@ import os
 from torch.nn import init
 from torch.autograd import Variable
 import torch
-from visdom import Visdom
 import numpy as np
 from torch.optim import lr_scheduler
 

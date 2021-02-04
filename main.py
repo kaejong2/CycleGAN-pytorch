@@ -39,5 +39,5 @@ if __name__ == '__main__':
 
     model = cycleGAN(args)
     
-    model.run(save_ckpt=args.ckpt_path, result_path=args.result_path)
+    model.run(ckpt_path=args.ckpt_path, result_path=args.result_path)
  
