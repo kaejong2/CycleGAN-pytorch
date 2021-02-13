@@ -5,7 +5,7 @@ from test import test
 def Arguments():
     parser = argparse.ArgumentParser(description='Arguments for CycleGAN.')
 
-    parser.add_argument('--gpu', type=int, default=0, help='GPU number to use.')
+    parser.add_argument('--gpu', type=int, default=1, help='GPU number to use.')
     parser.add_argument('--mode', type=str, default='train', choices=["train", "test"], help='Run type.')
     # Dataset arguments
     parser.add_argument('--batch_size', type=int, default=4, help='Integer value for batch size.')
