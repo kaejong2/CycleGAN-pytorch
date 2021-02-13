@@ -47,29 +47,21 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         
         # 3 x 256 x 256 -> 64 x 128 x 128
-        model =  [  nn.Conv2d(input_nc, 64, kernel_size=4, stride=2, padding=1),
-                    nn.LeakyReLU(0.2, inplace=True) ]
-        # 64 x 128 x 128 -> 128 x 64 x 64
-        model += [  nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1),
-                    nn.InstanceNorm2d(128), 
-                    nn.LeakyReLU(0.2, inplace=True) ]
-        # 128 x 64 x 64 -> 256 x 32 x 32
-        model += [  nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),
-                    nn.InstanceNorm2d(256), 
-                    nn.LeakyReLU(0.2, inplace=True) ]
-        # 256 x 32 x 32 -> 512 x 16 x 16
-        model += [  nn.Conv2d(256, 512, kernel_size=4, stride=1, padding=1),
-                    nn.InstanceNorm2d(512), 
-                    nn.LeakyReLU(0.2, inplace=True) ]
-        # 512 x 16 x 16 -> 1 x 16 x 16
-        model += [nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=1)]
+        self.C64 = ConvBlock(in_features=input_nc, out_features=64, kernel_size=4, padding=1, padding_mode='zeros', stride=2, norm=False, act="LeakyReLU", drop=False, mode='Conv')
+        self.C128 = ConvBlock(in_features=64, out_features=128, kernel_size=4, padding=1, padding_mode='zeros', stride=2, norm=False, act="LeakyReLU", drop=False, mode='Conv')
+        self.C256 = ConvBlock(in_features=128, out_features=256, kernel_size=4, padding=1, padding_mode='zeros', stride=2, norm=False, act="LeakyReLU", drop=False, mode='Conv')
+        self.C512 = ConvBlock(in_features=256, out_features=512, kernel_size=4, padding=1, padding_mode='zeros', stride=1, norm=False, act="LeakyReLU", drop=False, mode='Conv')
+        self.final_layer = ConvBlock(in_features=512, out_features=1, kernel_size=4, padding=1, padding_mode='zeros', stride=1, norm=False, act="LeakyReLU", drop=False, mode='Conv')
+        
 
-        self.model = nn.Sequential(*model)
 
     def forward(self, x):
-        x =  self.model(x)
-        # Average pooling and flatten
+        x =  self.C64(x)
+        x =  self.C128(x)
+        x =  self.C256(x)
+        x =  self.C512(x)
+        x =  self.final_layer(x)
         return x
-        # return F.avg_pool2d(x, x.size()[2:]).view(x.size()[0], -1)
+
 
 
