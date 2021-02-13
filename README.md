@@ -7,7 +7,7 @@
 ![alt text](./img/paper1.png "Novelty of pix2pix")
 
 
-# Train cycleGAN with PyTorch
+# cycleGAN with PyTorch
 
 ## Requirment
 - Python                 3.7+
