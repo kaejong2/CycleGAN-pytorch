@@ -25,7 +25,10 @@
 ## Training
 
     $ python main.py --mode train 
-
+                     --data_path ./monet2photo \
+                     --ckpt_path ./ckpt \
+                     --result_path ./result \
+                     --gpu 0
 ---
 
 * Set 
@@ -35,20 +38,14 @@
 
 ## Test
     $ python main.py --mode test 
-
+                     --data_path ./monet2photo \
+                     --ckpt_path ./ckpt \
+                     --result_path ./result \
+                     --gpu 0
 ---
 
 * To test using trained network, set **ckpt_path** defined in the **train** phase.
-* Generated images are saved in the **images** subfolder along with **[result directory]** folder.
+* Generated image will be saved as ** sample.jpg ** in the ** [result directory] ** folder.
 
-
-## Tensorboard
-
-    $ tensorboard --logdir /log/* --port 6006
-                  
-After the above comment executes, go **http://localhost:6006**
-
-* You can change **[(optional) 4 digit port number]**.
-* Default 4 digit port number is **6006**.
 
 ## Results
