@@ -37,7 +37,7 @@ def save(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch):
         os.makedirs(ckpt_path)
     
     torch.save({'netG_A2B' : netG_A2B.state_dict(), 'netG_B2A' : netG_B2A.state_dict(), 'netD_A':netD_A.state_dict(), 'netD_B': netD_B.state_dict(), 'optimG':optimG.state_dict(), 'optimD': optimD.state_dict()},
-    "%s/model_epoch%d.pth" % (ckpt_pa,epoch))
+    "%s/model_epoch%d.pth" % (ckpt_path, epoch))
 
 def load(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
     if not os.path.exists(ckpt_path):

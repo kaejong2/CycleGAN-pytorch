@@ -25,7 +25,7 @@ class Generator(nn.Module):
 
         # Denote c7s1-k : d7s1
         model = [nn.ReflectionPad2d(3),
-                 nn.Conv2d(input_channels, 64, 7),
+                 nn.Conv2d(input_channels, 64, kernel_size=7, stride=1),
                  nn.InstanceNorm2d(64),
                  nn.ReLU(inplace=True) ]
 
@@ -33,7 +33,7 @@ class Generator(nn.Module):
         in_features = 64
         out_features = in_features*2
         for _ in range(2):
-            model += [  nn.Conv2d(in_features, out_features, 3, stride=2, padding=1),
+            model += [  nn.Conv2d(in_features, out_features, kernel_size=4, stride=2, padding=1),
                         nn.InstanceNorm2d(out_features),
                         nn.ReLU(inplace=True) ]
             in_features = out_features
@@ -46,7 +46,7 @@ class Generator(nn.Module):
         # Denote uk : u128, u64
         out_features = in_features//2
         for _ in range(2):
-            model += [  nn.ConvTranspose2d(in_features, out_features, 3, stride=2, padding=1, output_padding=1),
+            model += [  nn.ConvTranspose2d(in_features, out_features, kernel_size=4, stride=2, padding=1),
                         nn.InstanceNorm2d(out_features),
                         nn.ReLU(inplace=True) ]
             in_features = out_features
@@ -54,7 +54,7 @@ class Generator(nn.Module):
 
         # Denote c7s1-l : d7s1-3(output_channels)
         model += [  nn.ReflectionPad2d(3),
-                    nn.Conv2d(64, output_channels, 7),
+                    nn.Conv2d(64, output_channels, kernel_size=7, stride=1),
                     nn.Tanh() ]
 
         self.model = nn.Sequential(*model)
@@ -65,31 +65,31 @@ class Generator(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, input_nc):
         super(Discriminator, self).__init__()
-
-        # A bunch of convolutions one after another
-        model = [   nn.Conv2d(input_nc, 64, 4, stride=2, padding=1),
+        
+        # 3 x 256 x 256 -> 64 x 128 x 128
+        model =  [  nn.Conv2d(input_nc, 64, kernel_size=4, stride=2, padding=1),
                     nn.LeakyReLU(0.2, inplace=True) ]
-
-        model += [  nn.Conv2d(64, 128, 4, stride=2, padding=1),
+        # 64 x 128 x 128 -> 128 x 64 x 64
+        model += [  nn.Conv2d(64, 128, kernel_size=4, stride=2, padding=1),
                     nn.InstanceNorm2d(128), 
                     nn.LeakyReLU(0.2, inplace=True) ]
-
-        model += [  nn.Conv2d(128, 256, 4, stride=2, padding=1),
+        # 128 x 64 x 64 -> 256 x 32 x 32
+        model += [  nn.Conv2d(128, 256, kernel_size=4, stride=2, padding=1),
                     nn.InstanceNorm2d(256), 
                     nn.LeakyReLU(0.2, inplace=True) ]
-
-        model += [  nn.Conv2d(256, 512, 4, padding=1),
+        # 256 x 32 x 32 -> 512 x 16 x 16
+        model += [  nn.Conv2d(256, 512, kernel_size=4, stride=1, padding=1),
                     nn.InstanceNorm2d(512), 
                     nn.LeakyReLU(0.2, inplace=True) ]
-
-        # FCN classification layer
-        model += [nn.Conv2d(512, 1, 4, padding=1)]
+        # 512 x 16 x 16 -> 1 x 16 x 16
+        model += [nn.Conv2d(512, 1, kernel_size=4, stride=1, padding=1)]
 
         self.model = nn.Sequential(*model)
 
     def forward(self, x):
         x =  self.model(x)
         # Average pooling and flatten
-        return F.avg_pool2d(x, x.size()[2:]).view(x.size()[0], -1)
+        return x
+        # return F.avg_pool2d(x, x.size()[2:]).view(x.size()[0], -1)
 
 
