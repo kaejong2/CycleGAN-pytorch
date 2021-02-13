@@ -93,6 +93,7 @@ class cycleGAN():
 
                 loss_D = loss_D_A + loss_D_A
                 loss_D.backward()
+                self.optimizerD.step()
 
                 set_requires_grad([self.netD_A, self.netD_B], False)
                 self.optimizerG.zero_grad()
@@ -111,8 +112,8 @@ class cycleGAN():
                 loss_identity_B = self.criterion_identity(real_B, identity_B) * 5
 
                 loss_G = loss_G_A2B + loss_G_B2A + loss_cycle_A + loss_cycle_B + loss_identity_A + loss_identity_B
+                
                 loss_G.backward()
-
                 self.optimizerG.step()
 
                 loss_G_A2B_train += [loss_G_A2B.item()]

@@ -1,13 +1,13 @@
 import argparse
 import torch
 from train import cycleGAN
-
+from test import test
 def Arguments():
     parser = argparse.ArgumentParser(description='Arguments for CycleGAN.')
 
     parser.add_argument('--gpu', type=int, default=2, help='GPU number to use.')
     # Dataset arguments
-    parser.add_argument('--batch_size', type=int, default=10, help='Integer value for batch size.')
+    parser.add_argument('--batch_size', type=int, default=1, help='Integer value for batch size.')
     parser.add_argument('--image_size', type=int, default=256, help='Integer value for number of points.')
     parser.add_argument('--input_nc', type=int, default=3, help='size of image height')
     parser.add_argument('--output_nc', type=int, default=3, help='size of image height')
@@ -37,7 +37,8 @@ if __name__ == '__main__':
 
     args.device = torch.device('cuda:'+str(args.gpu) if torch.cuda.is_available() else 'cpu')
 
-    model = cycleGAN(args)
+    # model = cycleGAN(args)
     
-    model.run(ckpt_path=args.ckpt_path, result_path=args.result_path)
+    # model.run(ckpt_path=args.ckpt_path, result_path=args.result_path)
  
+    test(args)

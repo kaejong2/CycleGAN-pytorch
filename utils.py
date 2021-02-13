@@ -6,10 +6,6 @@ import os
 from torch.nn import init
 from torch.autograd import Variable
 import torch
-<<<<<<< HEAD
-
-=======
->>>>>>> 9f0119b63b58ef05d306d1aaca71ec0d422289c6
 import numpy as np
 from torch.optim import lr_scheduler
 
@@ -36,25 +32,25 @@ def init_weight(net, init_type='normal', init_gain=0.02):
     print('initialize network with %s' % init_type)
     net.apply(init_func)  # apply the initialization function <init_func>
 
-def save(ckpt_dir, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch):
-    if not os.path.exists(ckpt_dir):
-        os.makedirs(ckpt_dir)
+def save(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch):
+    if not os.path.exists(ckpt_path):
+        os.makedirs(ckpt_path)
     
     torch.save({'netG_A2B' : netG_A2B.state_dict(), 'netG_B2A' : netG_B2A.state_dict(), 'netD_A':netD_A.state_dict(), 'netD_B': netD_B.state_dict(), 'optimG':optimG.state_dict(), 'optimD': optimD.state_dict()},
-    "%s/model_epoch%d.pth" % (ckpt_dir,epoch))
+    "%s/model_epoch%d.pth" % (ckpt_pa,epoch))
 
-def load(ckpt_dir, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
-    if not os.path.exists(ckpt_dir):
+def load(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
+    if not os.path.exists(ckpt_path):
         epoch = 0
         return netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch
 
     device = torch.device('cuda:'+str(args.gpu) if torch.cuda.is_available() else 'cpu')
 
-    ckpt_lst = os.listdir(ckpt_dir)
+    ckpt_lst = os.listdir(ckpt_path)
     ckpt_lst = [f for f in ckpt_lst if f.endswich('pth')]
     ckpt_lst.sort(key=lambda f: int(''.join(filter(str.indigit, f))))
 
-    dict_model = torch.load('%s/%s'% (ckpt_dir, ckpt_lst[-1]), map_location=device)
+    dict_model = torch.load('%s/%s'% (ckpt_path, ckpt_lst[-1]), map_location=device)
 
     netG_A2B.load_state_dict(dict_model['netG_A2B'])
     netG_B2A.load_state_dict(dict_model['netG_B2A'])
@@ -66,10 +62,14 @@ def load(ckpt_dir, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
 
     return netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch
 
-def load_checkpoint(ckpt_path):
-    ckpt = torch.load(ckpt_path)
-    print('Loading checkpoint from %s succeed' % ckpt_path)
-    return ckpt
+def load_checkpoint(ckpt_path, device):
+    ckpt_lst = os.listdir(ckpt_path)
+    # ckpt_lst = [f for f in ckpt_lst if f.endswich('pth')]
+    # ckpt_lst.sort(key=lambda f: int(''.join(filter(str.indigit, f))))
+    ckpt_lst.sort()
+    dict_model = torch.load('%s/%s'% (ckpt_path, ckpt_lst[-1]), map_location=device)
+    print('Loading checkpoint from %s/%s succeed' % (ckpt_path, ckpt_lst[-1]))
+    return dict_model
 
 
 def set_requires_grad(nets, requires_grad=False):
