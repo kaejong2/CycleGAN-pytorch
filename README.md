@@ -31,7 +31,7 @@
                      --gpu 0
 ---
 
-* Set 
+* Set your data_path, ckpt_path, and result_path.
 * Hyperparameters were written to **arg.txt** under the **[log directory]**.
 
 
