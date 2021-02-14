@@ -18,14 +18,14 @@ class cycleGAN():
         self.args = args
         
         # Define the Network
-        self.netG_A2B = Generator(self.args.input_nc, self.args.output_nc).to(device= self.args.device)
-        self.netG_B2A = Generator(self.args.output_nc, self.args.input_nc).to(device= self.args.device)
-        self.netD_A = Discriminator(self.args.input_nc).to(device=self.args.device)
-        self.netD_B = Discriminator(self.args.output_nc).to(device=self.args.device)        
-        init_weight(self.netD_B)
-        init_weight(self.netD_A)
-        init_weight(self.netG_A2B)        
-        init_weight(self.netG_B2A)
+        self.netG_A2B = Generator(input_channels=self.args.input_nc, output_channels=self.args.output_nc, n_residual_blocks=self.args.n_Rk).to(device=self.args.device)
+        self.netG_B2A = Generator(input_channels=self.args.output_nc, output_channels=self.args.input_nc, n_residual_blocks=self.args.n_Rk).to(device=self.args.device)
+        self.netD_A = Discriminator(input_nc=self.args.input_nc).to(device=self.args.device)
+        self.netD_B = Discriminator(input_nc=self.args.output_nc).to(device=self.args.device)        
+        init_weight(self.netD_B, init_type=args.init_weight)
+        init_weight(self.netD_A, init_type=args.init_weight)
+        init_weight(self.netG_A2B, init_type=args.init_weight)        
+        init_weight(self.netG_B2A, init_type=args.init_weight)
 
         # Define Loss function
         self.criterion_GAN = torch.nn.MSELoss()

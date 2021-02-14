@@ -42,6 +42,7 @@ class Generator(nn.Module):
         
         return x
 
+
 class Discriminator(nn.Module):
     def __init__(self, input_nc):
         super(Discriminator, self).__init__()
@@ -52,8 +53,6 @@ class Discriminator(nn.Module):
         self.C256 = ConvBlock(in_features=128, out_features=256, kernel_size=4, padding=1, padding_mode='zeros', stride=2, norm=False, act="LeakyReLU", drop=False, mode='Conv')
         self.C512 = ConvBlock(in_features=256, out_features=512, kernel_size=4, padding=1, padding_mode='zeros', stride=1, norm=False, act="LeakyReLU", drop=False, mode='Conv')
         self.final_layer = ConvBlock(in_features=512, out_features=1, kernel_size=4, padding=1, padding_mode='zeros', stride=1, norm=False, act="LeakyReLU", drop=False, mode='Conv')
-        
-
 
     def forward(self, x):
         x =  self.C64(x)

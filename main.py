@@ -15,18 +15,21 @@ def Arguments():
     parser.add_argument('--channels', type=int, default=10, help='Number of image channels')
     
     # Optimizer arguments
-    parser.add_argument('--b1', type=int, default=0.5, help='GPU number to use.')
-    parser.add_argument('--b2', type=int, default=0.999, help='GPU number to use.')
+    parser.add_argument('--init_weight', type=str, default='normal', help='')
+    parser.add_argument('--b1', type=int, default=0.5, help='')
+    parser.add_argument('--b2', type=int, default=0.999, help='')
     parser.add_argument('--lr', type=float, default=2e-4, help='Adam : learning rate.')
     parser.add_argument('--decay_epoch', type=int, default=100, help="epoch from which to start lr decay")
 
     # Training arguments
-    parser.add_argument('--epoch', type=int, default=0, help='Epoch to start training from.')
-    parser.add_argument('--num_epochs', type=int, default=200, help='Number of epochs of training.')
-    parser.add_argument('--save_freq', type=int, default=1, help='Number of save frequency.')
+    parser.add_argument('--epoch', type=int, default=1, help='Epoch to start training from.')
+    parser.add_argument('--num_epochs', type=int, default=260, help='Number of epochs of training.')
+    parser.add_argument('--save_freq', type=int, default=3, help='Number of save frequency.')
     parser.add_argument('--data_path', type=str, default='/mnt/hdd/jongjin/cyclegan/monet2photo/', help='Checkpoint path.')
     parser.add_argument('--ckpt_path', type=str, default='/mnt/hdd/jongjin/cyclegan/ckpt/', help='Checkpoint path.')
     parser.add_argument('--result_path', type=str, default='/mnt/hdd/jongjin/cyclegan/result/', help='Generated results path.')
+    parser.add_argument('--n_Rk', type=int, default=9, help='Generated results path.')
+    
     
     # Model arguments
     args = parser.parse_args()

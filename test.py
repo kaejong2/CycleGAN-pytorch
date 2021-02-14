@@ -17,8 +17,8 @@ from dataloader import data_loader
 
 def test(args):
     # network init
-    netG_A2B = Generator(args.input_nc, args.output_nc).to(device=args.device)
-    netG_B2A = Generator(args.output_nc, args.input_nc).to(device=args.device)
+    netG_A2B = Generator(args.input_nc, args.output_nc, args.n_Rk).to(device=args.device)
+    netG_B2A = Generator(args.output_nc, args.input_nc, args.n_Rk).to(device=args.device)
     
     try:
         ckpt = load_checkpoint(args.ckpt_path, args.device)
@@ -42,5 +42,5 @@ def test(args):
 
         result = (torch.cat([real_A, fake_A, recon_A, real_B, fake_B, recon_B], dim=0).data + 1)/ 2.0
 
-        torchvision.utils.save_image(result, args.result_path+'sample.jpg', nrow=3)
+        torchvision.utils.save_image(result, args.result_path+'sample'+str(_iter)+'.jpg', nrow=3)
 
