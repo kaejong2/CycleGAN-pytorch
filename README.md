@@ -47,6 +47,20 @@
 * Generated image will be saved as ** sample.jpg ** in the ** [result directory+"_test"] ** folder.
 
 
+## Results
+![alt-text](./git_img/photo2monet.png "convert photo to monet")
+
+    1st row: input-photo 
+    2nd row: output-monet 
+    3th row: Identity 
+    
+![alt-text](./git_img/monet2photo.png "convert monet to photo")
+
+    1st row: input-monet 
+    2nd row: output-photo 
+    3th row: Identity 
+
+
 ## Directories structure
 
     [dataset name]
@@ -96,17 +110,3 @@
             |   \---sample1234.jpg
             \---[data_name2]
                 |   ...
-
-
-## Results
-![alt-text](./git_img/photo2monet.png "convert photo to monet")
-
-    1st row: input-photo 
-    2nd row: output-monet 
-    3th row: Identity 
-    
-![alt-text](./git_img/monet2photo.png "convert monet to photo")
-
-    1st row: input-monet 
-    2nd row: output-photo 
-    3th row: Identity 
