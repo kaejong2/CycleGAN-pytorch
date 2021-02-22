@@ -11,6 +11,7 @@ import torchvision.transforms as transforms
 class ImageDataset(Dataset):
     def __init__(self, data_path, transforms_=None, mode='train'):
         self.transform = transforms_
+
         self.files_A = sorted(glob.glob(os.path.join(data_path,'%sA' % mode)+'/*'))
         self.files_B = sorted(glob.glob(os.path.join(data_path,'%sB' % mode)+'/*'))
 
@@ -31,9 +32,10 @@ class ImageDataset(Dataset):
 
 def data_loader(args, mode="train"):
     # Dataset loader
+    data_path = os.path.join(args.root_path,args.data_path)
     if mode=='test':
         transforms_ = transforms.Compose([transforms.Resize((256, 256), Image.BICUBIC), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-        dataset = ImageDataset(args.data_path, transforms_=transforms_, mode = mode)
+        dataset = ImageDataset(data_path, transforms_=transforms_, mode = mode)
 
         dataloader = DataLoader(dataset, batch_size=3, shuffle=True, num_workers=2)
         return dataloader
@@ -45,7 +47,7 @@ def data_loader(args, mode="train"):
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     
-        dataset = ImageDataset(args.data_path, transforms_=transforms_, mode = mode)
+        dataset = ImageDataset(data_path, transforms_=transforms_, mode = mode)
 
         dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=2)
         return dataloader

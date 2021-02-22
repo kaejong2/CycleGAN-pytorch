@@ -20,7 +20,7 @@
 - scipy                  1.5.4
 - tensorboard            2.4.1
 - tensorboardX           2.1
-- tqdm                   4.56.0
+
 
 ## Training
 

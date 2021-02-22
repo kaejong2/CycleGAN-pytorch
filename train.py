@@ -48,9 +48,9 @@ class cycleGAN():
         
         #dataset
         self.dataloader = data_loader(self.args)
-        self.val_dataloader = data_loader(args, mode='test')
+        self.val_dataloader = data_loader(self.args, mode='test')
 
-    def run(self, ckpt_path=None, load_ckpt=None, result_path=None):
+    def run(self):
         self.netG_A2B.train()
         self.netG_B2A.train()
         self.netD_A.train()
@@ -161,7 +161,7 @@ class cycleGAN():
                     print("sample save")
                     sample_images(self.args, batches_done, self.netG_A2B, self.netG_B2A, self.val_dataloader)
             
-            save(ckpt_path, self.netG_A2B, self.netG_B2A, self.netD_A, self.netD_B, self.optimizerG, self.optimizerD_A, self.optimizerD_B, epoch)
+            save(os.path.join(self.args.root_path, self.args.ckpt_path), self.netG_A2B, self.netG_B2A, self.netD_A, self.netD_B, self.optimizerG, self.optimizerD_A, self.optimizerD_B, epoch)
         
             self.lr_scheduler_G.step()
             self.lr_scheduler_D_A.step()

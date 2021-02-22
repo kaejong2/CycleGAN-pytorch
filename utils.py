@@ -101,7 +101,7 @@ class LambdaLR():
 
 
 def sample_images(args, batches_done, netG_A2B, netG_B2A, val_dataloader):
-    """Saves a generated sample from the validation set"""
+    save_path = os.path.join(args.root_path, args.result_path) 
     imgs = next(iter(val_dataloader))
     real_A = imgs['img_A'].to(device=args.device)
     fake_B = netG_A2B(real_A)
@@ -119,5 +119,5 @@ def sample_images(args, batches_done, netG_A2B, netG_B2A, val_dataloader):
     recon_B = make_grid(recon_B, nrow=3, normalize=True)
 
     result = (torch.cat((real_A, fake_B, recon_A, real_B, fake_A, recon_B), 1))
-    torchvision.utils.save_image(result, args.result_path+'sample'+str(batches_done)+'.jpg', normalize=False)
+    torchvision.utils.save_image(result, save_path+'/sample'+str(batches_done)+'.jpg', normalize=False)
         
