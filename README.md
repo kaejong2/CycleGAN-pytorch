@@ -99,5 +99,6 @@
 
 
 ## Results
+![alt-text](./git_img/photo2monet.png "convert photo to monet")
 
-dsadsa
+![alt-text](./git_img/monet2photo.png "convert monet to photo")
