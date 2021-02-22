@@ -31,4 +31,4 @@ def test(args):
     netG_B2A.eval()
     netG_A2B.eval()
     for i in range(len(dataloader)):
-       sample_images(args, i, self.netG_A2B, self.netG_B2A, dataloader)
+       sample_images(args, i, netG_A2B, netG_B2A, dataloader)

@@ -81,13 +81,6 @@ def load_checkpoint(ckpt_path, device):
     return dict_model
 
 
-def set_requires_grad(nets, requires_grad=False):
-        if not isinstance(nets, list):
-            nets = [nets]
-        for net in nets:
-            if net is not None:
-                for param in net.parameters():
-                    param.requires_grad = requires_grad
 
 class LambdaLR():
     def __init__(self, epochs, offset, decay_epoch):
@@ -100,9 +93,11 @@ class LambdaLR():
 
 
 
-def sample_images(args, batches_done, netG_A2B, netG_B2A, val_dataloader):
-    save_path = os.path.join(args.root_path, args.result_path) 
-    imgs = next(iter(val_dataloader))
+def sample_images(args, batches_done, netG_A2B, netG_B2A, dataloader):
+    save_path = os.path.join(args.root_path, args.result_path)
+
+    imgs = next(iter(dataloader))
+
     real_A = imgs['img_A'].to(device=args.device)
     fake_B = netG_A2B(real_A)
     recon_A = netG_B2A(fake_B)

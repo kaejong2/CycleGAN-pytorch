@@ -44,11 +44,12 @@ if __name__ == '__main__':
     os.makedirs("%s/%s" % (args.root_path, args.data_path), exist_ok=True)
     os.makedirs("%s/%s" % (args.root_path, args.ckpt_path), exist_ok=True)
     os.makedirs("%s/%s" % (args.root_path, args.result_path), exist_ok=True)
-    
+
     for arg, value in vars(args).items():
         print("log %s : %r" % (arg, value))
     if args.mode == 'train':
         model = cycleGAN(args)
         model.run()
     elif args.mode == 'test':
+        os.makedirs("%s/%s_test" % (args.root_path, args.result_path), exist_ok=True)
         test(args)
