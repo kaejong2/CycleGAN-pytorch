@@ -4,7 +4,7 @@
 ### Title
 [Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
 
-![alt text](./img/paper1.png "Novelty of pix2pix")
+![alt-text-1](./git_img/cycleGAN.png "CycleGAN mapping function Structure diagram")
 
 ## CycleGAN with PyTorch
     조금 남았다.
