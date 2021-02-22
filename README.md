@@ -21,7 +21,7 @@
 - tensorboardX           2.1
 
 
-## Training
+## Train
 
     $ python main.py --mode train 
                      --data_path data/monet2photo \
