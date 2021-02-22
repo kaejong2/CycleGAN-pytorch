@@ -28,19 +28,22 @@ def test(args):
         print('Failed to load checkpoint')
 
     dataloader = data_loader(args, mode = 'test')
+    netG_B2A.eval()
+    netG_A2B.eval()
     for _iter, data in enumerate(dataloader):
         real_A = data['img_A'].to(device=args.device)
         real_B = data['img_B'].to(device=args.device)
-
-        netG_B2A.eval()
-        netG_A2B.eval()
         with torch.no_grad():
             fake_A = netG_A2B(real_A)
             fake_B = netG_B2A(real_B)
             recon_A = netG_A2B(fake_A)
             recon_B = netG_B2A(fake_B)
 
-        result = (torch.cat([real_A, fake_A, recon_A, real_B, fake_B, recon_B], dim=0).data + 1)/ 2.0
+        # result = (torch.cat([real_A, fake_A, recon_A, real_B, fake_B, recon_B], dim=0).data + 1)/ 2.0
 
-        torchvision.utils.save_image(result, args.result_path+'sample'+str(_iter)+'.jpg', nrow=3)
+        # torchvision.utils.save_image(result, args.result_path+'sample'+str(_iter)+'.jpg', nrow=3)
 
+        # result = (torch.cat([real_A, fake_A, recon_A, real_B, fake_B, recon_B], dim=0).data,-2)
+        result = (torch.cat((real_A.data, fake_A.data, recon_A.data, real_B.data, fake_B.data, recon_B.data),-2))
+        torchvision.utils.save_image(result, args.result_path+'sample'+str(_iter)+'.jpg', nrow=6, normalize=True)
+        

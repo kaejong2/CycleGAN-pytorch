@@ -8,6 +8,8 @@ from torch.autograd import Variable
 import torch
 import numpy as np
 from torch.optim import lr_scheduler
+import torchvision
+from torchvision.utils import make_grid
 
 def init_weight(net, init_type='normal', init_gain=0.02):
     def init_func(m):  # define the initialization function
@@ -33,7 +35,7 @@ def init_weight(net, init_type='normal', init_gain=0.02):
     net.apply(init_func)  # apply the initialization function <init_func>
 
 
-def save(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch):
+def save(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD_A, optimD_B, epoch):
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
     torch.save({'netG_A2B' : netG_A2B.state_dict(), 
@@ -41,13 +43,14 @@ def save(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch):
                 'netD_A':netD_A.state_dict(), 
                 'netD_B': netD_B.state_dict(), 
                 'optimG':optimG.state_dict(), 
-                'optimD': optimD.state_dict()},
+                'optimD_A': optimD_A.state_dict(),
+                'optimD_B': optimD_B.state_dict()},
                 "%s/model_epoch%d.pth" % (ckpt_path, epoch))
 
-def load(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
+def load(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD_A, optimD_B):
     if not os.path.exists(ckpt_path):
         epoch = 0
-        return netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch
+        return netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD_A, optimD_B, epoch
 
     device = torch.device('cuda:'+str(args.gpu) if torch.cuda.is_available() else 'cpu')
 
@@ -62,7 +65,8 @@ def load(ckpt_path, netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD):
     netD_A.load_state_dict(dict_model['netD_A'])
     netD_B.load_state_dict(dict_model['netD_B'])
     optimG.load_state_dict(dict_model['optimG'])
-    optimD.load_state_dict(dict_model['optimD'])
+    optimD_A.load_state_dict(dict_model['optimD_A'])
+    optimD_B.load_state_dict(dict_model['optimD_B'])
     epoch = int(ckpt_lst[-1].split('epoch')[1].split('.pth')[0])
 
     return netG_A2B, netG_B2A, netD_A, netD_B, optimG, optimD, epoch
@@ -93,3 +97,27 @@ class LambdaLR():
 
     def step(self, epoch):
         return 1.0 - max(0, epoch + self.offset - self.decay_epoch)/(self.epochs - self.decay_epoch)
+
+
+
+def sample_images(args, batches_done, netG_A2B, netG_B2A, val_dataloader):
+    """Saves a generated sample from the validation set"""
+    imgs = next(iter(val_dataloader))
+    real_A = imgs['img_A'].to(device=args.device)
+    fake_B = netG_A2B(real_A)
+    recon_A = netG_B2A(fake_B)
+
+    real_B = imgs['img_B'].to(device=args.device)    
+    fake_A = netG_B2A(real_B)
+    recon_B = netG_A2B(fake_A)
+
+    real_A = make_grid(real_A, nrow=3, normalize=True)
+    real_B = make_grid(real_B, nrow=3, normalize=True)
+    fake_A = make_grid(fake_A, nrow=3, normalize=True)
+    fake_B = make_grid(fake_B, nrow=3, normalize=True)
+    recon_A = make_grid(recon_A, nrow=3, normalize=True)
+    recon_B = make_grid(recon_B, nrow=3, normalize=True)
+
+    result = (torch.cat((real_A, fake_B, recon_A, real_B, fake_A, recon_B), 1))
+    torchvision.utils.save_image(result, args.result_path+'sample'+str(batches_done)+'.jpg', normalize=False)
+        

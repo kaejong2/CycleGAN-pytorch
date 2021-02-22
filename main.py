@@ -29,6 +29,7 @@ def Arguments():
     parser.add_argument('--ckpt_path', type=str, default='/mnt/hdd/jongjin/cyclegan/ckpt/', help='Checkpoint path.')
     parser.add_argument('--result_path', type=str, default='/mnt/hdd/jongjin/cyclegan/result/', help='Generated results path.')
     parser.add_argument('--n_Rk', type=int, default=9, help='Generated results path.')
+    parser.add_argument('--sample_save', type=int, default=100, help='Generated results path.')
     
     
     # Model arguments

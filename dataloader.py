@@ -33,18 +33,22 @@ def data_loader(args, mode="train"):
     # Dataset loader
     if mode=='test':
         transforms_ = transforms.Compose([transforms.Resize((256, 256), Image.BICUBIC), transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        dataset = ImageDataset(args.data_path, transforms_=transforms_, mode = mode)
+
+        dataloader = DataLoader(dataset, batch_size=3, shuffle=True, num_workers=2)
+        return dataloader
     else:
         transforms_ = transforms.Compose(
-            [transforms.Resize((286,286), Image.BICUBIC), 
-            transforms.RandomCrop((256, 256)),
-            transforms.RandomHorizontalFlip(),
+            [transforms.Resize((256, 256), Image.BICUBIC), 
+            # transforms.RandomCrop((256, 256)),
+            # transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     
-    dataset = ImageDataset(args.data_path, transforms_=transforms_, mode = mode)
+        dataset = ImageDataset(args.data_path, transforms_=transforms_, mode = mode)
 
-    dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=False, num_workers=2)
-    return dataloader
+        dataloader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=2)
+        return dataloader
 
 
 # args = Arguments()
