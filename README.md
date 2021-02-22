@@ -1,14 +1,13 @@
 # CycleGAN Implement
-
+## CycleGAN with PyTorch
 
 ### Title
 [Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks](https://arxiv.org/abs/1703.10593)
 
-![alt-text-1](./git_img/cycleGAN.png "CycleGAN mapping function Structure diagram")
 
-## CycleGAN with PyTorch
-    조금 남았다.
+<img src="./git_img/cycleGAN.png"  width="750" height="200"> 
 ---
+
 ## Requirment
 - Python                 3.7+
 - torch                  1.7.1+cu110
@@ -52,13 +51,13 @@
 
     1st row: input-photo 
     2nd row: output-monet 
-    3th row: Identity 
+    3th row: Identity-photo
     
 ![alt-text](./git_img/monet2photo.png "convert monet to photo")
 
     1st row: input-monet 
     2nd row: output-photo 
-    3th row: Identity 
+    3th row: Identity-monet
 
 
 ## Directories structure
