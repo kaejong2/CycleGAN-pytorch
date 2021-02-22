@@ -47,7 +47,7 @@ class cycleGAN():
         self.lr_scheduler_D_B = torch.optim.lr_scheduler.LambdaLR(self.optimizerD_B, lr_lambda=LambdaLR(self.args.num_epochs, self.args.epoch, self.args.decay_epoch).step)
         
         #dataset
-        self.dataloader = data_loader(self.args)
+        self.train_dataloader = data_loader(self.args)
         self.val_dataloader = data_loader(self.args, mode='test')
 
     def run(self):
